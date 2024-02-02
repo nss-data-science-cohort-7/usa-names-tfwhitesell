@@ -36,8 +36,38 @@ FROM names;
 -- There are 98400 distinct names in the dataset.
 
 -- 7. Are there more males or more females registered?
+SELECT gender, SUM(num_registered) AS total_registered
+FROM names
+GROUP BY 1;
+-- There are about 3.5 million more males than females registered
 
 -- 8. What are the most popular male and female names overall (i.e., the most total registrations)?
+WITH males AS (
+	SELECT name, gender, SUM(num_registered) AS num_registered
+	FROM names
+	WHERE gender = 'M'
+	GROUP BY 1, 2
+	ORDER BY 3 DESC
+	LIMIT 1
+	),
+
+females AS (
+	SELECT name, gender, SUM(num_registered) AS num_registered
+	FROM names
+	WHERE gender = 'F'
+	GROUP BY 1, 2
+	ORDER BY 3 DESC
+	LIMIT 1
+	)
+
+SELECT name, gender, num_registered
+FROM males
+
+UNION
+
+SELECT name, gender, num_registered
+FROM females;
+-- James and Mary are the most popular male and female names respectively.
 
 -- 9. What are the most popular boy and girl names of the first decade of the 2000s (2000 - 2009)?
 
