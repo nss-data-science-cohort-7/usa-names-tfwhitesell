@@ -31,6 +31,9 @@ ORDER BY 2 DESC;
 -- There were 4200022 registered in 1957
 
 -- 6. How many different (distinct) names are contained in the dataset?
+SELECT COUNT(DISTINCT name) AS name_count
+FROM names;
+-- There are 98400 distinct names in the dataset.
 
 -- 7. Are there more males or more females registered?
 
