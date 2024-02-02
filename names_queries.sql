@@ -116,10 +116,11 @@ ORDER BY 2 DESC;
 -- Ximena is the most popular girls name starting with the letter X.
 
 -- 12. How many distinct names appear that start with a 'Q', but whose second letter is not 'u'?
-SELECT DISTINCT name
+SELECT COUNT(DISTINCT name) AS q_not_qu
 FROM names
-WHERE name LIKE "Q%" AND
-	name NOT LIKE ""
+WHERE name LIKE 'Q%' AND
+	name NOT LIKE '_u%';
+-- There are 46 names that begin with Q with a second letter that is not u.
 
 -- 13. Which is the more popular spelling between "Stephen" and "Steven"?
 -- 		Use a single query to answer this question.
@@ -130,7 +131,28 @@ GROUP BY 1
 ORDER BY 2 DESC;
 -- Steven is more popular than Stephen.
 
--- 14. What percentage of names are "unisex" - that is what percentage of names have been used both for boys and for girls?
+-- 14. What percentage of names are "unisex" - that is what percentage of names have been used 
+--		both for boys and for girls?
+-- boy names inner join with girl names to find unisex names
+-- divide number of unisex names by total number of names
+WITH male_names AS (
+	SELECT DISTINCT name
+	FROM names
+	WHERE gender = 'M'),
+
+female_names AS (
+	SELECT DISTINCT name
+	FROM names
+	WHERE gender = 'F'),
+
+unisex_names AS (
+	SELECT m.name
+	FROM male_names AS m
+	INNER JOIN female_names AS f
+		ON m.name = f.name)
+
+SELECT ROUND((COUNT(unisex_names.*) * 100.0) / (SELECT COUNT(*) FROM names), 2) AS percentage_unisex_names
+FROM unisex_names;
 
 -- 15. How many names have made an appearance in every single year since 1880?
 
