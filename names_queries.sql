@@ -133,8 +133,6 @@ ORDER BY 2 DESC;
 
 -- 14. What percentage of names are "unisex" - that is what percentage of names have been used 
 --		both for boys and for girls?
--- boy names inner join with girl names to find unisex names
--- divide number of unisex names by total number of names
 WITH male_names AS (
 	SELECT DISTINCT name
 	FROM names
@@ -151,10 +149,13 @@ unisex_names AS (
 	INNER JOIN female_names AS f
 		ON m.name = f.name)
 
-SELECT ROUND((COUNT(unisex_names.*) * 100.0) / (SELECT COUNT(*) FROM names), 2) AS percentage_unisex_names
+SELECT ROUND((COUNT(unisex_names.*) * 100.0) / (SELECT COUNT(DISTINCT name) FROM names), 2) AS percentage_unisex_names
 FROM unisex_names;
+-- 10.95% of names are unisex.
 
 -- 15. How many names have made an appearance in every single year since 1880?
+SELECT COUNT(DISTINCT year)
+FROM names;
 
 -- 16. How many names have only appeared in one year?
 
