@@ -116,8 +116,19 @@ ORDER BY 2 DESC;
 -- Ximena is the most popular girls name starting with the letter X.
 
 -- 12. How many distinct names appear that start with a 'Q', but whose second letter is not 'u'?
+SELECT DISTINCT name
+FROM names
+WHERE name LIKE "Q%" AND
+	name NOT LIKE ""
 
--- 13. Which is the more popular spelling between "Stephen" and "Steven"? Use a single query to answer this question.
+-- 13. Which is the more popular spelling between "Stephen" and "Steven"?
+-- 		Use a single query to answer this question.
+SELECT name, SUM(num_registered) AS num_registered
+FROM names
+WHERE name IN ('Stephen', 'Steven')
+GROUP BY 1
+ORDER BY 2 DESC;
+-- Steven is more popular than Stephen.
 
 -- 14. What percentage of names are "unisex" - that is what percentage of names have been used both for boys and for girls?
 
