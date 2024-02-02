@@ -154,8 +154,16 @@ FROM unisex_names;
 -- 10.95% of names are unisex.
 
 -- 15. How many names have made an appearance in every single year since 1880?
-SELECT COUNT(DISTINCT year)
-FROM names;
+WITH all_years AS (
+	SELECT name, COUNT(DISTINCT year)
+	FROM names
+	GROUP BY 1
+	HAVING COUNT(DISTINCT year) = 139
+	ORDER BY 2 DESC)
+
+SELECT COUNT(*) AS num_names
+FROM all_years;
+-- There are 921 names that made an appearance in every year in the dataset.
 
 -- 16. How many names have only appeared in one year?
 
