@@ -100,6 +100,11 @@ FROM females;
 -- Emily and Jacob were the most popular female and male names in the first decade of the 2000s.
 
 -- 10. Which year had the most variety in names (i.e. had the most distinct names)?
+SELECT year, COUNT(DISTINCT name)
+FROM names
+GROUP BY 1
+ORDER BY 2 DESC;
+-- 2008 was the year with the most distinct names.
 
 -- 11. What is the most popular name for a girl that starts with the letter X?
 
