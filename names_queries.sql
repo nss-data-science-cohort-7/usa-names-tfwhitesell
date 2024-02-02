@@ -107,6 +107,13 @@ ORDER BY 2 DESC;
 -- 2008 was the year with the most distinct names.
 
 -- 11. What is the most popular name for a girl that starts with the letter X?
+SELECT name, SUM(num_registered) AS num_registered
+FROM names
+WHERE gender = 'F' AND
+	name LIKE 'X%'
+GROUP BY 1
+ORDER BY 2 DESC;
+-- Ximena is the most popular girls name starting with the letter X.
 
 -- 12. How many distinct names appear that start with a 'Q', but whose second letter is not 'u'?
 
