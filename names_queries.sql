@@ -70,6 +70,34 @@ FROM females;
 -- James and Mary are the most popular male and female names respectively.
 
 -- 9. What are the most popular boy and girl names of the first decade of the 2000s (2000 - 2009)?
+WITH males AS (
+	SELECT name, gender, SUM(num_registered) AS num_registered
+	FROM names
+	WHERE gender = 'M' AND
+		year BETWEEN 2000 AND 2009
+	GROUP BY 1, 2
+	ORDER BY 3 DESC
+	LIMIT 1
+	),
+
+females AS (
+	SELECT name, gender, SUM(num_registered) AS num_registered
+	FROM names
+	WHERE gender = 'F' AND
+		year BETWEEN 2000 AND 2009
+	GROUP BY 1, 2
+	ORDER BY 3 DESC
+	LIMIT 1
+	)
+
+SELECT name, gender, num_registered
+FROM males
+
+UNION
+
+SELECT name, gender, num_registered
+FROM females;
+-- Emily and Jacob were the most popular female and male names in the first decade of the 2000s.
 
 -- 10. Which year had the most variety in names (i.e. had the most distinct names)?
 
