@@ -166,6 +166,16 @@ FROM all_years;
 -- There are 921 names that made an appearance in every year in the dataset.
 
 -- 16. How many names have only appeared in one year?
+WITH all_years AS (
+	SELECT name, COUNT(DISTINCT year)
+	FROM names
+	GROUP BY 1
+	HAVING COUNT(DISTINCT year) = 1
+	ORDER BY 2 DESC)
+
+SELECT COUNT(*) AS num_names
+FROM all_years;
+-- There are 21123 names that only appeared in one year.
 
 -- 17. How many names only appeared in the 1950s?
 
@@ -173,4 +183,5 @@ FROM all_years;
 
 -- 19. Find the names that have not be used in the longest.
 
--- 20. Come up with a question that you would like to answer using this dataset. Then write a query to answer this question.
+-- 20. Come up with a question that you would like to answer using this dataset.
+--		Then write a query to answer this question.
