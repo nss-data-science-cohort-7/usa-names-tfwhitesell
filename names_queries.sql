@@ -210,3 +210,11 @@ ORDER BY 2;
 
 -- 20. Come up with a question that you would like to answer using this dataset.
 --		Then write a query to answer this question.
+-- How does the popularity of the name 'Teresa' change over the course of the timeframe covered by this dataset?
+SELECT name, year, SUM(num_registered) AS num_registered
+FROM names
+WHERE name = 'Teresa'
+GROUP BY 1, 2
+ORDER BY 2;
+-- The name 'Teresa' appears in every year of the dataset, but peaks in popularity around 1960.
+-- 
