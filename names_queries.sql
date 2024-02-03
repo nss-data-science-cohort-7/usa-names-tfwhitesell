@@ -202,6 +202,11 @@ FROM recent_names;
 -- 11270 names made their first appearance in the 2010s.
 
 -- 19. Find the names that have not be used in the longest.
+SELECT name, MAX(year) AS last_used_year
+FROM names
+GROUP BY 1
+ORDER BY 2;
+-- The names Roll and Zilpah last appeared in the dataset in 1881.
 
 -- 20. Come up with a question that you would like to answer using this dataset.
 --		Then write a query to answer this question.
