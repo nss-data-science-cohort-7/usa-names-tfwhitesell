@@ -178,8 +178,28 @@ FROM all_years;
 -- There are 21123 names that only appeared in one year.
 
 -- 17. How many names only appeared in the 1950s?
+WITH names_50s AS (
+	SELECT name, MIN(year) AS first_year, MAX(year) AS last_year
+	FROM names
+	GROUP BY 1
+	HAVING MIN(year) >= 1950 AND MAX(year) <= 1959
+)
+
+SELECT COUNT(*)
+FROM names_50s;
+-- 661 names only appeared in the 1950s.
 
 -- 18. How many names made their first appearance in the 2010s?
+WITH recent_names AS (
+	SELECT name, MIN(year) AS first_year
+	FROM names
+	GROUP BY 1
+	HAVING MIN(year) >= 2010
+)
+
+SELECT COUNT(*)
+FROM recent_names;
+-- 11270 names made their first appearance in the 2010s.
 
 -- 19. Find the names that have not be used in the longest.
 
