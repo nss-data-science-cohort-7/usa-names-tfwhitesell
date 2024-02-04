@@ -169,6 +169,25 @@ ORDER BY 4
 
 -- 10. Which names have been among the top 25 most popular names for their gender in every single
 -- 	year contained in the names table?
+WITH popular_rank AS (
+	SELECT name, gender, year, num_registered,
+		RANK() OVER(PARTITION BY year, gender ORDER by num_registered DESC) AS most_popular
+	FROM names
+	ORDER BY 3, 4 DESC, 5
+),
+
+top_25 AS (
+	SELECT *
+	FROM popular_rank
+	WHERE most_popular <= 25
+)
+
+SELECT name, gender, COUNT(*) as num_years
+FROM top_25
+GROUP BY 1, 2
+HAVING COUNT(*) = (SELECT (MAX(year) - MIN(year) +1) FROM names)
+ORDER BY 3 DESC
+;
 
 -- 11. Find the name that had the biggest gap between years that it was used. 
 
