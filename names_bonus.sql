@@ -87,6 +87,13 @@ ORDER BY 2 DESC;
 -- There were 1060 names that only appeared in 2018 which is higher than any other year.
 
 -- 7. Which year had the most new names (names that hadn't appeared in any years before that year)?
+SELECT first_used, COUNT(*) AS new_names
+FROM (SELECT name, MIN(year) AS first_used
+		FROM names
+		GROUP BY 1)
+GROUP BY 1
+ORDER BY 2 DESC;
+-- There were 2027 names in 2007 which had not appeared in any prior year.
 
 -- 8. Is there more variety (more distinct names) for females or for males? Is this true for all
 -- 	years or are their any years where this is reversed?
