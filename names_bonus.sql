@@ -97,6 +97,18 @@ ORDER BY 2 DESC;
 
 -- 8. Is there more variety (more distinct names) for females or for males? Is this true for all
 -- 	years or are their any years where this is reversed?
+SELECT (SELECT COUNT(DISTINCT name)
+			FROM names
+			WHERE gender = 'M') AS num_male_names,
+		(SELECT COUNT(DISTINCT name)
+			FROM names
+			WHERE gender = 'F') AS num_female_names
+FROM names
+GROUP BY 1, 2;
+-- There are 41495 distinct male names and 67698 distinct female names so females have a greater variety
+--	of names than males.
+
+
 
 -- 9. Which names are closest to being evenly split between male and female usage? For this question,
 -- 	consider only names that have been used at least 10000 times in total.
