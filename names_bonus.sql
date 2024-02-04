@@ -76,6 +76,15 @@ GROUP BY 1;
 	
 -- 6. In question 16, you found how many names appeared in only one year. Which year had the highest 
 -- 	number of names that only appeared once?
+SELECT year, COUNT(*) AS unique_names
+FROM names
+WHERE name IN (SELECT name
+	FROM names
+	GROUP BY 1
+	HAVING COUNT(DISTINCT year) = 1)
+GROUP BY 1
+ORDER BY 2 DESC;
+-- There were 1060 names that only appeared in 2018 which is higher than any other year.
 
 -- 7. Which year had the most new names (names that hadn't appeared in any years before that year)?
 
