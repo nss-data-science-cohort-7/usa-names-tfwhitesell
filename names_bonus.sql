@@ -144,6 +144,28 @@ WHERE (num_female_names - num_male_names) <= 0;
 
 -- 9. Which names are closest to being evenly split between male and female usage? For this question,
 -- 	consider only names that have been used at least 10000 times in total.
+-- in my thinking, for a name to be split between male and female it should be a unisex name
+SELECT f.name, female_reg, male_reg, ABS(female_reg - male_reg) AS abs_gender_diff -- absolute difference to get values closest to 0
+FROM 
+	-- get female names and num_registered
+	(SELECT name, SUM(num_registered) AS female_reg
+	 	FROM names
+	  	WHERE gender = 'F'
+	 	GROUP BY 1) AS f
+	-- inner join male names to down-select to names used by both genders in the dataset
+INNER JOIN (SELECT name, SUM(num_registered) AS male_reg
+	 	FROM names
+		WHERE gender = 'M'
+	 	GROUP BY 1) AS m
+	USING(name)
+-- filter for names that have been used at least 10000 times between both genders
+WHERE name IN (SELECT name
+			FROM names
+			 GROUP BY 1
+			HAVING SUM(num_registered) >= 10000)
+ORDER BY 4
+-- The most evenly split is Unknown, although that name is probably a result of messy data.
+-- The most evenly split real name is Santana with a difference of 93 between female and male usage.
 
 -- 10. Which names have been among the top 25 most popular names for their gender in every single
 -- 	year contained in the names table?
