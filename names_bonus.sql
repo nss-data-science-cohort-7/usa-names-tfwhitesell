@@ -19,7 +19,23 @@ SELECT COUNT(*)
 FROM palindromes;
 -- There are 137 names that are palindromes in the dataset.
 
--- 3. Find all names that contain no vowels (for this question, we'll count a,e,i,o,u, and y as vowels). 
+-- 3. Find all names that contain no vowels (for this question, we'll count a,e,i,o,u, and y as vowels).
+-- not using regex
+SELECT name
+FROM names
+WHERE NOT(LOWER(name) LIKE '%a%'
+		 OR LOWER(name) LIKE '%e%'
+		 OR LOWER(name) LIKE '%i%'
+		 OR LOWER(name) LIKE '%o%'
+		 OR LOWER(name) LIKE '%u%'
+		 OR LOWER(name) LIKE '%y%')
+GROUP BY 1;
+
+-- with regex
+SELECT name
+FROM names
+WHERE name NOT SIMILAR TO '%[aeiouyAEIOUY]%'
+GROUP BY 1;
 
 -- 4. How many double-letter names show up in the dataset? Double-letter means the same letter repeated 
 -- 	back-to-back, like Matthew or Aaron. Are there any triple-letter names?
