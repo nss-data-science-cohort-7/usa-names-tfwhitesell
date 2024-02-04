@@ -173,7 +173,6 @@ WITH popular_rank AS (
 	SELECT name, gender, year, num_registered,
 		RANK() OVER(PARTITION BY year, gender ORDER by num_registered DESC) AS most_popular
 	FROM names
-	ORDER BY 3, 4 DESC, 5
 ),
 
 top_25 AS (
@@ -186,7 +185,6 @@ SELECT name, gender, COUNT(*) as num_years
 FROM top_25
 GROUP BY 1, 2
 HAVING COUNT(*) = (SELECT (MAX(year) - MIN(year) +1) FROM names)
-ORDER BY 3 DESC
 ;
 
 -- 11. Find the name that had the biggest gap between years that it was used.
@@ -203,5 +201,25 @@ ORDER BY 4 DESC NULLS LAST
 
 -- 12. Have there been any names that were not used in the first year of the dataset (1880) but
 -- 	which made it to be the most-used name for its gender in some year?
+-- names that appeared in 1880
+WITH names_1880 AS (
+	SELECT name
+	FROM names
+	WHERE year = 1880
+	GROUP BY 1
+),
+-- calculate rank for names
+popular_rank AS (
+	SELECT name, gender, year, num_registered,
+		RANK() OVER(PARTITION BY year, gender ORDER by num_registered DESC) AS most_popular
+	FROM names
+)
+-- names that got to #1 but didn't appear in 1880 grouped by number of years at #1
+SELECT name, gender, COUNT(*) AS years_at_1
+FROM popular_rank
+WHERE most_popular = 1
+	AND name NOT IN (SELECT name from names_1880)
+GROUP BY 1, 2;
+
 -- 	Difficult follow-up: What is the shortest amount of time that a name has gone from not being
 -- 	used at all to being the number one used name for its gender in a year?
