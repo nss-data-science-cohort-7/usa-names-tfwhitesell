@@ -42,61 +42,33 @@ GROUP BY 1;
 -- There are about 3.5 million more males than females registered
 
 -- 8. What are the most popular male and female names overall (i.e., the most total registrations)?
-WITH males AS (
-	SELECT name, gender, SUM(num_registered) AS num_registered
+WITH name_rank AS (
+	SELECT name, gender,
+		RANK() OVER (PARTITION BY gender ORDER BY SUM(num_registered) DESC) AS rank_num
 	FROM names
-	WHERE gender = 'M'
 	GROUP BY 1, 2
-	ORDER BY 3 DESC
-	LIMIT 1
-	),
+)
 
-females AS (
-	SELECT name, gender, SUM(num_registered) AS num_registered
-	FROM names
-	WHERE gender = 'F'
-	GROUP BY 1, 2
-	ORDER BY 3 DESC
-	LIMIT 1
-	)
-
-SELECT name, gender, num_registered
-FROM males
-
-UNION
-
-SELECT name, gender, num_registered
-FROM females;
+SELECT name, gender
+FROM name_rank
+WHERE rank_num = 1;
 -- James and Mary are the most popular male and female names respectively.
+-- note: postgres doesn't have QUALIFY which would have returned the same (albeit with the rank column)
+--	without using a CTE. Could just have ordered by rank_num to put the names at the top.
+--	Can't put a window function in the where clause.
 
 -- 9. What are the most popular boy and girl names of the first decade of the 2000s (2000 - 2009)?
-WITH males AS (
-	SELECT name, gender, SUM(num_registered) AS num_registered
+WITH name_rank AS (
+	SELECT name, gender,
+		RANK() OVER (PARTITION BY gender ORDER BY SUM(num_registered) DESC) AS rank_num
 	FROM names
-	WHERE gender = 'M' AND
-		year BETWEEN 2000 AND 2009
+	WHERE year BETWEEN 2000 AND 2009
 	GROUP BY 1, 2
-	ORDER BY 3 DESC
-	LIMIT 1
-	),
+)
 
-females AS (
-	SELECT name, gender, SUM(num_registered) AS num_registered
-	FROM names
-	WHERE gender = 'F' AND
-		year BETWEEN 2000 AND 2009
-	GROUP BY 1, 2
-	ORDER BY 3 DESC
-	LIMIT 1
-	)
-
-SELECT name, gender, num_registered
-FROM males
-
-UNION
-
-SELECT name, gender, num_registered
-FROM females;
+SELECT name, gender
+FROM name_rank
+WHERE rank_num = 1;
 -- Emily and Jacob were the most popular female and male names in the first decade of the 2000s.
 
 -- 10. Which year had the most variety in names (i.e. had the most distinct names)?
@@ -153,13 +125,24 @@ SELECT ROUND((COUNT(unisex_names.*) * 100.0) / (SELECT COUNT(DISTINCT name) FROM
 FROM unisex_names;
 -- 10.95% of names are unisex.
 
+-- alternative code to get the same answer - more compact but takes more than twice as long
+WITH unisex_names AS (
+	SELECT name, COUNT(DISTINCT gender)
+	FROM names
+	GROUP BY 1
+	HAVING COUNT(DISTINCT gender) > 1
+)
+
+SELECT ROUND((COUNT(unisex_names.*) * 100.0) / (SELECT COUNT(DISTINCT name) FROM names), 2) AS percentage_unisex_names
+FROM unisex_names;
+
 -- 15. How many names have made an appearance in every single year since 1880?
 WITH all_years AS (
 	SELECT name, COUNT(DISTINCT year)
 	FROM names
 	GROUP BY 1
-	HAVING COUNT(DISTINCT year) = 139
-	ORDER BY 2 DESC)
+	HAVING COUNT(DISTINCT year) = (SELECT MAX(year) - MIN(year) + 1 FROM names)
+)
 
 SELECT COUNT(*) AS num_names
 FROM all_years;
