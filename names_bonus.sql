@@ -39,6 +39,29 @@ GROUP BY 1;
 
 -- 4. How many double-letter names show up in the dataset? Double-letter means the same letter repeated 
 -- 	back-to-back, like Matthew or Aaron. Are there any triple-letter names?
+WITH double_letters AS (
+	SELECT name
+	FROM names
+	WHERE LOWER(name) ~ '(.)\1'
+	GROUP BY 1
+)
+
+SELECT COUNT(*) AS num_names
+FROM double_letters;
+-- There are 22537 names with back-to-back double letters.
+-- This could be more compact by using COUNT DISTINCT but it takes about 4 times longer to run.
+-- Choosing the less compact code in favor of performance. DISTINCT is a pretty heavy load computationally.
+
+WITH double_letters AS (
+	SELECT name
+	FROM names
+	WHERE LOWER(name) ~ '(.)\1\1'
+	GROUP BY 1
+)
+
+SELECT COUNT(*) AS num_names
+FROM double_letters;
+-- There are 12 names with triple back-to-back repeated letters.
 
 -- 5. On question 17 of the first part of the exercise, you found names that only appeared in the 1950s. 
 -- 	Now, find all names that did not appear in the 1950s but were used both before and after the 1950s.
