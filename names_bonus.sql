@@ -65,6 +65,14 @@ FROM double_letters;
 
 -- 5. On question 17 of the first part of the exercise, you found names that only appeared in the 1950s. 
 -- 	Now, find all names that did not appear in the 1950s but were used both before and after the 1950s.
+SELECT name
+FROM names
+WHERE name NOT IN (SELECT name
+FROM names
+WHERE year BETWEEN 1950 AND 1959
+GROUP BY 1)
+GROUP BY 1;
+-- There are 81393 names in the dataset that did not appear in the 1950s.
 	
 -- 6. In question 16, you found how many names appeared in only one year. Which year had the highest 
 -- 	number of names that only appeared once?
