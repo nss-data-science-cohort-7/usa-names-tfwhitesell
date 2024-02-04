@@ -189,7 +189,17 @@ HAVING COUNT(*) = (SELECT (MAX(year) - MIN(year) +1) FROM names)
 ORDER BY 3 DESC
 ;
 
--- 11. Find the name that had the biggest gap between years that it was used. 
+-- 11. Find the name that had the biggest gap between years that it was used.
+-- get names and the years each appears
+-- use LAG window function to pull the previous year value into the same row
+-- calculate difference between year and previous year using lag
+-- could omit the prev_year column and just keep year_diff, leaving it in for clarity
+SELECT name, year,
+	LAG(year, 1) OVER(PARTITION BY name ORDER BY year) AS prev_year,
+	year - LAG(year, 1) OVER(PARTITION BY name ORDER BY year) AS year_diff
+FROM names
+GROUP BY 1, 2
+ORDER BY 4 DESC NULLS LAST
 
 -- 12. Have there been any names that were not used in the first year of the dataset (1880) but
 -- 	which made it to be the most-used name for its gender in some year?
