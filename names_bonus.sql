@@ -108,7 +108,39 @@ GROUP BY 1, 2;
 -- There are 41495 distinct male names and 67698 distinct female names so females have a greater variety
 --	of names than males.
 
+WITH female_names AS (
+	SELECT year, COUNT(*) AS num_female_names
+	FROM names
+	WHERE gender = 'F'
+	GROUP BY 1
+),
 
+male_names AS (
+	SELECT year, COUNT(*) AS num_male_names
+	FROM names
+	WHERE gender = 'M'
+	GROUP BY 1
+)
+
+SELECT f.year, num_female_names, num_male_names, (num_female_names - num_male_names) AS gender_diff
+FROM female_names AS f
+INNER JOIN male_names AS m
+	USING(year)
+WHERE (num_female_names - num_male_names) <= 0;
+-- There were 3 years where more male names were used than female names - 1880, 1881, 1882.
+
+SELECT f.year, num_female_names, num_male_names, (num_female_names - num_male_names) AS gender_diff
+FROM (SELECT year, COUNT(*) AS num_female_names
+		FROM names
+		WHERE gender = 'F'
+		GROUP BY 1) AS f
+INNER JOIN (SELECT year, COUNT(*) AS num_male_names
+		FROM names
+		WHERE gender = 'M'
+		GROUP BY 1) AS m
+	USING(year)
+WHERE (num_female_names - num_male_names) <= 0;
+-- same as above but with the CTEs replaced by subqueries in the FROM statement
 
 -- 9. Which names are closest to being evenly split between male and female usage? For this question,
 -- 	consider only names that have been used at least 10000 times in total.
