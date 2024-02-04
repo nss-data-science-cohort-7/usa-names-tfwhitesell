@@ -221,5 +221,40 @@ WHERE most_popular = 1
 	AND name NOT IN (SELECT name from names_1880)
 GROUP BY 1, 2;
 
+
 -- 	Difficult follow-up: What is the shortest amount of time that a name has gone from not being
 -- 	used at all to being the number one used name for its gender in a year?
+
+-- min year for each name (minus 1 since that would be the last year it wasn't used)
+-- exclude 1880 names since we can't know exactly when they would have appeared before the data starts
+WITH first_used AS (
+	SELECT name, gender, MIN(year) AS first_year
+	FROM names
+	WHERE name NOT IN (
+		SELECT name
+		FROM names
+		WHERE year = 1880
+		GROUP BY 1)
+	GROUP BY 1, 2
+),
+-- calculate name ranks
+popular_rank AS (
+	SELECT name, gender, year, num_registered,
+		RANK() OVER(PARTITION BY year, gender ORDER by num_registered DESC) AS most_popular
+	FROM names
+),
+-- find first year each name was at #1
+num_1 AS (
+	SELECT name, gender, MIN(year) AS first_time_at_1
+	FROM popular_rank
+	WHERE most_popular = 1
+	GROUP BY 1, 2
+)
+-- take the difference between being at #1 and first appearance
+SELECT n.name, n.gender, first_time_at_1, first_year, first_time_at_1 - first_year As time_to_top
+FROM num_1 AS n
+INNER JOIN first_used AS f
+	ON n.name = f.name AND n.gender = f.gender
+ORDER BY 5;
+-- Jennifer is the with the least number of years from first appearance to being most popular at 54 years.
+-- Liam is the only male name that did not appear in 1880 to have been most popular in any given year.
