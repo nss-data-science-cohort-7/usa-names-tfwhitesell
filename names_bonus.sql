@@ -8,6 +8,16 @@ ORDER BY 2 DESC;
 -- seem to be incomplete (eg Christopherjame or Christopheranth).
 
 -- 2. How many names are palindromes (i.e. read the same backwards and forwards, such as Bob and Elle)?
+WITH palindromes AS (
+	SELECT name
+	FROM names
+	GROUP BY 1
+	HAVING LOWER(name) = LOWER(REVERSE(name))
+)
+
+SELECT COUNT(*)
+FROM palindromes;
+-- There are 137 names that are palindromes in the dataset.
 
 -- 3. Find all names that contain no vowels (for this question, we'll count a,e,i,o,u, and y as vowels). 
 
